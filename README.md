@@ -3,4 +3,4 @@ cortex-api
 
 Data Cortex API
 
-Lease see the [wiki](../../wiki/) for documentation.
+Please see the [wiki](../../wiki/) for documentation.
