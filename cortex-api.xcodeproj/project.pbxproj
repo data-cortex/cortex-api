@@ -8,12 +8,14 @@
 
 /* Begin PBXFileReference section */
 		2DCAD63B182FE86D00FB8CF8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		2DCAD63D182FE96E00FB8CF8 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		2DCAD634182FE45100FB8CF8 = {
 			isa = PBXGroup;
 			children = (
+				2DCAD63D182FE96E00FB8CF8 /* LICENSE */,
 				2DCAD63B182FE86D00FB8CF8 /* README.md */,
 				2DCAD63C182FE86D00FB8CF8 /* src */,
 			);
