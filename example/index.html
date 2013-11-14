@@ -8,16 +8,55 @@
      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.js" type="text/javascript"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
-    <script src=''>
+    <script src="jquery.js" type="text/javascript"></script>
+    <script src="data_cortex.js" type="text/javascript"></script>
+    <script src="example.js" type="text/javascript"></script>
 </head>
 <body>
-    <h1>Welcome to bluewell</h1>
+    <h1>Welcome to data cortex example!</h1>
+    <hr>
+    <h4>API Key</h4>
+    <p>You must enter a valid API key before any tracking will work.</p>
+    API Key: <input id='api_key' size='30' value=''/><br/>
+    <button onclick='saveApiKey();'>Save API Key</button>
     <hr/>
-    <button onclick="document.location.href='/auth/facebook';">Login with Facebook</button><br/>
+    <h4>Basic Track</h4>
+    Level Number: <input id='level_num' value='1'/><br/>
+    Level Name: <input id='level_name' value='Example Level 1'/><br/>
     <br/>
-    <button onclick="document.location.href='/auth/google';">Login with Google</button>
-
-    <% include frag_ga.html %>
+    <button onclick='sendLevelStart();'>Send Level Start</button>
+    <button onclick='sendLevelFailure();'>Send Level End Failure</button>
+    <button onclick='sendLevelSuccess();'>Send Level End Success</button></br>
+    <br/>
+    <hr/>
+    <h4>Social Track</h4>
+    <p>You must link a facebook ID before sending or clicking messages</p>
+    Facebook ID: <input id='fb_id'/><br/>
+    <button onclick='linkFacebook();'>Link Facebook ID</button></br>
+    <br/>
+    Recipient Facebook ID List (comma seperated): <input id='to_fb_list'/><br/>
+    <button onclick='sendFacebookMessage();'>Send Message</button></br>
+    <br/>
+    Sender Facebook ID: <input id='from_fb_id'/><br/>
+    <button onclick='sendFacebookClick();'>Click Message</button></br>
+    <br/>
+    <hr/>
+    <h4>Experiment Track</h4>
+    Experiment Name: <input id='experiment_name' value='BackgroundColor'/><br/>
+    Variant Name: <input id='variant_name' value='blue'/><br/>
+    <br/>
+    <button onclick='sendExperimentEnroll();'>Enroll in Variant</button>
+    <button onclick='sendExperimentDisenroll();'>Disenroll in Experiment</button><br/>
+    <br/>
+    <hr/>
+    <h4>Economy Track</h4>
+    Spend Amount: <input id='spend_amount' value='100'/><br/>
+    Spend Currency: <input id='spend_currency' value='bluebucks'/><br/>
+    Spend Type: <input id='spend_type' value='true'/><br/>
+    <br/>
+    <button onclick='sendEconomy();'>Purchase</button><br/>
+    <br/>
+    <hr/>
+    <h4>Debug</h4>
+    <button onclick='debugClear();'>Clear Data</button>
 </body>

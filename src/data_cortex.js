@@ -12,23 +12,40 @@ var dcQueue = {};
 dcQueue._eventList = [];
 dcQueue._sendTimeout = false;
 dcQueue._config = {
-    global_config: {}
+    ready: false,
+    global_props: {}
 };
 dcQueue._sendInFlight = false;
 dcQueue.push = function(arg)
 {
     function add_event(e)
     {
-        if( !('event_datetime' in e ) )
+        if( typeof e == 'function' )
         {
-            e.event_datetime = getISODateString();
+            e(dcQueue);
         }
-        dcQueue._eventList.push(e);
+        else
+        {
+            if( 'type' in e && e.type == 'install' )
+            {
+                if( getStoredValue('dc_sent_install') )
+                {
+                    // already sent install, skip!
+                    return;
+                }
+            }
+            if( !('event_datetime' in e ) )
+            {
+                e.event_datetime = getISODateString();
+            }
+            dcQueue._eventList.push(e);
+        }
     }
 
     if( 'pop' in arg )
     {
-        while( var e = arg.pop() )
+        var e;
+        while( e = arg.pop() )
         {
             add_event(e);
         }
@@ -45,7 +62,7 @@ dcQueue.push = function(arg)
             window.clearTimeout(dcQueue._sendTimeout);
             dcQueue._sendTimeout = false;
         }
-        dcQueue._sendTimeout = window.setTimeout(sendEvents,500);
+        dcQueue._sendTimeout = window.setTimeout(sendEvents,1000);
     }
     else
     {
@@ -67,16 +84,19 @@ dcQueue.setup = function(config)
         throw "app_ver is required on config";
     }
     setConfigProperties(config);
+    dcQueue._config.ready = true;
+    sendEvents();
 };
 dcQueue.updateSetup = function(config)
 {
     setConfigProperties(config);
+    sendEvents();
 }
 
 function setConfigProperties(params)
 {
     var config = dcQueue._config
-    var global_config = config.global_props;
+    var global_props = config.global_props;
 
     if( params.org )
     {
@@ -84,61 +104,62 @@ function setConfigProperties(params)
     }
     if( params.api_key )
     {
-        global_config.api_key = params.api_key;
+        global_props.api_key = params.api_key;
     }
     if( params.app_ver )
     {
-        global_config.app_ver = params.app_ver;
+        global_props.app_ver = params.app_ver;
     }
     if( params.user_tag )
     {
-        global_config.user_tag = params.user_tag;
+        global_props.user_tag = params.user_tag;
     }
     if( params.facebook_tag )
     {
-        global_config.facebook_tag = params.facebook_tag;
+        global_props.facebook_tag = params.facebook_tag;
     }
     if( params.twitter_tag )
     {
-        global_config.twitter_tag = params.twitter_tag;
+        global_props.twitter_tag = params.twitter_tag;
     }
     if( params.google_tag )
     {
-        global_config.google_tag = params.google_tag;
+        global_props.google_tag = params.google_tag;
     }
     if( params.game_center_tag )
     {
-        global_config.game_center_tag = params.game_center_tag;
+        global_props.game_center_tag = params.game_center_tag;
     }
     if( params.device_tag )
     {
-        global_config.device_tag = params.device_tag;
+        global_props.device_tag = params.device_tag;
     }
  
-    if( !global_config.device_tag )
+    if( !global_props.device_tag )
     {
         if( getStoredValue('dc_device_tag') )
         {
-            global_config.device_tag = getStoredValue('dc_device_tag');
+            global_props.device_tag = getStoredValue('dc_device_tag');
         }
         else
         {
             var device_tag = makeRandomID(62);
             setStoredValue('dc_device_tag',device_tag);
+            global_props.device_tag = device_tag;
         }
     }
-    setDefaultProperties(global_config);
+    setDefaultProperties(global_props);
 
     config.track_url = "https://api.data-cortex.com/" + config.org + "/1/track";
     config.global_props = global_props;
     dcQueue._config = config;
 }
-function setDefaultProperties(global_config)
+function setDefaultProperties(global_props)
 {
     function regexGet(haystack,regex,def)
     {
         var matches = haystack.match(regex);
-        if( matches.length > 2 )
+        if( matches && matches.length > 1 )
         {
             return matches[1];
         }
@@ -150,39 +171,39 @@ function setDefaultProperties(global_config)
 
     var ua = navigator.userAgent
  
-    var os = "unknown";
+    var os_name = "unknown";
     var os_ver = "unknown";
     if( ua.indexOf("Win") != -1 )
     {
-        os = "windows";
+        os_name = "windows";
         os_ver = regexGet(ua,/Windows NT ([^ ;)]*)/,"unknown");
     }
-    else if( ua.indexOf("Mac") != -1 )
+    else if( ua.indexOf("iPhone OS") != -1 )
     {
-        os = "mac";
-        os_ver = regexGet(ua,/Intel Mac OS X ([^ ;)]*)/,"unknown");
-        os_ver = os_ver.replace(/_/g,'.');
-        os_ver = os_ver.replace(/\.0$/,'');
-    }
-    else if( ua.indexOf("iPhone OS") )
-    {
-        os = "ios";
+        os_name = "ios";
         os_ver = regexGet(ua,/iPhone OS ([^ ;)]*)/,"unknown");
         os_ver = os_ver.replace(/_/g,'.');
     }
-    else if( ua.indexOf("Android") )
+    else if( ua.indexOf("Mac OS X") != -1 )
     {
-        os = "android";
+        os_name = "mac";
+        os_ver = regexGet(ua,/Mac OS X ([^ ;)]*)/,"unknown");
+        os_ver = os_ver.replace(/_/g,'.');
+        os_ver = os_ver.replace(/\.0$/,'');
+    }
+    else if( ua.indexOf("Android") != -1 )
+    {
+        os_name = "android";
         os_ver = regexGet(ua,/Android ([^ ;)]*)/,"unknown");
         os_ver = os_ver.replace(/_/g,'.');
     }
     else if( ua.indexOf("X11") != -1 )
     {
-        os = "unix";
+        os_name = "unix";
     }
     else if( ua.indexOf("Linux") != -1 )
     {
-        os = "linux";
+        os_name = "linux";
     }
  
     var browser = "unknown";
@@ -202,17 +223,17 @@ function setDefaultProperties(global_config)
         browser = "firefox";
         browser_ver = regexGet(ua,/Firefox\/([^ ;)]*)/,"unknown");
     }
-    else if( ua.indexOf("Android") )
+    else if( ua.indexOf("Android") != -1 )
     {
         browser = "android";
         browser_ver = regexGet(ua,/Version\/([^ ;)]*)/,"unknown");
     }
-    else if( ua.indexOf("Safari") )
+    else if( ua.indexOf("Safari") != -1 )
     {
         browser = "safari";
         browser_ver = regexGet(ua,/Version\/([^ ;)]*)/,"unknown");
     }
-    else if( ua.indexOf("Trident") )
+    else if( ua.indexOf("Trident") != -1 )
     {
         browser = "ie";
         browser_ver = regexGet(ua,/rv:([^ ;)]*)/,"unknown");
@@ -248,16 +269,16 @@ function setDefaultProperties(global_config)
         }
     }
  
-    global_config.os = os_name;
-    global_config.os_ver = os_ver;
-    global_config.browser = browser;
-    global_config.browser_ver = browser_ver;
-    global_config.device_type = device_type;
+    global_props.os_name = os_name;
+    global_props.os_ver = os_ver;
+    global_props.browser = browser;
+    global_props.browser_ver = browser_ver;
+    global_props.device_type = device_type;
 }
 
 function sendEvents()
 {
-    if( !dcQueue._config )
+    if( !dcQueue._config.ready )
     {
         // Can't send before config does its thing
         return;
@@ -270,21 +291,33 @@ function sendEvents()
     {
         return;
     }
+    dcQueue._sendInFlight = true;
  
+    var config = dcQueue._config;
     var post_data = jQuery.extend({},config.global_props);
     post_data.events = dcQueue._eventList.splice(0,100);
  
-    var url = dcQueue._config.track_url;
+    var json = JSON.stringify(post_data);
+ 
+    var url = config.track_url;
     url += "?current_time=" + encodeURIComponent(getISODateString());
-    dcQueue._sendInFlight = true;
     jQuery.ajax({
         type: 'POST',
         url: url,
         contentType: 'application/json',
-        data: post_data,
+        data: json,
+        processData: false,
         success: function(data)
         {
             dcQueue._sendInFlight = false;
+            for( var i = 0 ; i < post_data.events.length ; ++i )
+            {
+                var e = post_data.events[i];
+                if( 'type' in e && e.type == 'install' )
+                {
+                    setStoredValue('dc_sent_install',true);
+                }
+            }
         },
         error: function()
         {
@@ -347,12 +380,13 @@ function getCookie(find_key)
 {
     var cookies = document.cookie.split(';');
  
-    for( var i = 0 ; i < cookie.length ; ++i )
+    for( var i = 0 ; i < cookies.length ; ++i )
     {
-        var key = cookie[i].split('=')[0].trim();
+        var cookie = cookies[i];
+        var key = cookie.split('=')[0].trim();
         if( key == find_key )
         {
-            var encoded_value = cookie[i].split('=')[1].trim();
+            var encoded_value = cookie.split('=')[1].trim();
             var value = decodeURIComponent(encoded_value);
             return value;
         }
@@ -381,13 +415,14 @@ function getISODateString()
         return r;
     }
 
-    return this.getUTCFullYear()
-        + '-' + pad( this.getUTCMonth() + 1 )
-        + '-' + pad( this.getUTCDate() )
-        + 'T' + pad( this.getUTCHours() )
-        + ':' + pad( this.getUTCMinutes() )
-        + ':' + pad( this.getUTCSeconds() )
-        + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
+    var d = new Date();
+    return d.getUTCFullYear()
+        + '-' + pad( d.getUTCMonth() + 1 )
+        + '-' + pad( d.getUTCDate() )
+        + 'T' + pad( d.getUTCHours() )
+        + ':' + pad( d.getUTCMinutes() )
+        + ':' + pad( d.getUTCSeconds() )
+        + '.' + String( (d.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
         + 'Z';
 }
 

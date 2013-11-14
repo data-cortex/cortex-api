@@ -11,6 +11,7 @@
 		2DCAD63D182FE96E00FB8CF8 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		2DCAD6521831F66B00FB8CF8 /* data_cortex.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = data_cortex.js; sourceTree = "<group>"; };
 		2DCAD6541832F6F400FB8CF8 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = index.html; path = example/index.html; sourceTree = "<group>"; };
+		2DE0DAA5183534C3000DC4A3 /* example.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = example.js; path = example/example.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -36,6 +37,7 @@
 			isa = PBXGroup;
 			children = (
 				2DCAD6541832F6F400FB8CF8 /* index.html */,
+				2DE0DAA5183534C3000DC4A3 /* example.js */,
 			);
 			name = example;
 			sourceTree = "<group>";
