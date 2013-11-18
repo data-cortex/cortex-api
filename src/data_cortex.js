@@ -150,7 +150,15 @@ function setConfigProperties(params)
     }
     setDefaultProperties(global_props);
 
-    config.track_url = "https://api.data-cortex.com/" + config.org + "/1/track";
+    if( getStoredValue('__dc_url_override') )
+    {
+        config.track_url = getStoredValue('__dc_url_override');
+    }
+    else
+    {
+        config.track_url = "https://api.data-cortex.com/";
+    }
+    config.track_url += config.org + "/1/track";
     config.global_props = global_props;
     dcQueue._config = config;
 }
@@ -171,39 +179,39 @@ function setDefaultProperties(global_props)
 
     var ua = navigator.userAgent
  
-    var os_name = "unknown";
+    var os = "unknown";
     var os_ver = "unknown";
     if( ua.indexOf("Win") != -1 )
     {
-        os_name = "windows";
+        os = "windows";
         os_ver = regexGet(ua,/Windows NT ([^ ;)]*)/,"unknown");
     }
     else if( ua.indexOf("iPhone OS") != -1 )
     {
-        os_name = "ios";
+        os = "ios";
         os_ver = regexGet(ua,/iPhone OS ([^ ;)]*)/,"unknown");
         os_ver = os_ver.replace(/_/g,'.');
     }
     else if( ua.indexOf("Mac OS X") != -1 )
     {
-        os_name = "mac";
+        os = "mac";
         os_ver = regexGet(ua,/Mac OS X ([^ ;)]*)/,"unknown");
         os_ver = os_ver.replace(/_/g,'.');
         os_ver = os_ver.replace(/\.0$/,'');
     }
     else if( ua.indexOf("Android") != -1 )
     {
-        os_name = "android";
+        os = "android";
         os_ver = regexGet(ua,/Android ([^ ;)]*)/,"unknown");
         os_ver = os_ver.replace(/_/g,'.');
     }
     else if( ua.indexOf("X11") != -1 )
     {
-        os_name = "unix";
+        os = "unix";
     }
     else if( ua.indexOf("Linux") != -1 )
     {
-        os_name = "linux";
+        os = "linux";
     }
  
     var browser = "unknown";
@@ -269,7 +277,7 @@ function setDefaultProperties(global_props)
         }
     }
  
-    global_props.os_name = os_name;
+    global_props.os = os;
     global_props.os_ver = os_ver;
     global_props.browser = browser;
     global_props.browser_ver = browser_ver;
@@ -322,7 +330,7 @@ function sendEvents()
         error: function()
         {
             // put back the events we sent
-            dcQueue._eventList.push(post_data.events);
+            dcQueue._eventList = dcQueue._eventList.concat(post_data.events);
             dcQueue._sendInFlight = false;
         }
     });

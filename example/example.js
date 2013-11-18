@@ -49,6 +49,7 @@ function saveApiKey()
         g_dc_api_key = api_key;
         window.localStorage['dc_api_key'] = api_key;
         dcQueue.push(dcReady);
+        window.alert("API Key Saved!");
     }
     else
     {
