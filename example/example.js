@@ -142,11 +142,10 @@ function sendFacebookClick()
     var from_fb_id = $('#from_fb_id').val();
     if( fb_id.length == 0 || from_fb_id.length == 0 )
     {
-        window.alert("Please enter a facebook id and from_fb_id.");
+        window.alert("Please enter a facebook id (to_tag) and from_fb_id (from_tag).");
     }
     else
     {
-        var to_list = to_fb_list.split(',');
         dcQueue.push({
             'type': 'message_click',
             'network': 'facebook',
