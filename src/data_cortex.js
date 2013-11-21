@@ -91,7 +91,13 @@ dcQueue.updateSetup = function(config)
 {
     setConfigProperties(config);
     sendEvents();
-}
+};
+dcQueue.resetInstallState = function()
+{
+    // Don't call this, ever.
+    setStoredValue('dc_sent_install',false);
+};
+
 
 function setConfigProperties(params)
 {
