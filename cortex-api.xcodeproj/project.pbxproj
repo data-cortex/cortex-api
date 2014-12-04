@@ -12,12 +12,19 @@
 		2DCAD6521831F66B00FB8CF8 /* data_cortex.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = data_cortex.js; sourceTree = "<group>"; };
 		2DCAD6541832F6F400FB8CF8 /* index.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = index.html; path = example/index.html; sourceTree = "<group>"; };
 		2DE0DAA5183534C3000DC4A3 /* example.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = example.js; path = example/example.js; sourceTree = "<group>"; };
+		2DE5D2AE1A310F7F001DDF3B /* Data-Best-Practices.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Data-Best-Practices.md"; sourceTree = "<group>"; };
+		2DE5D2AF1A310F7F001DDF3B /* Experiment-REST-API.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Experiment-REST-API.md"; sourceTree = "<group>"; };
+		2DE5D2B01A310F7F001DDF3B /* Home.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Home.md; sourceTree = "<group>"; };
+		2DE5D2B11A310F7F001DDF3B /* JS-SDK-Documentation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "JS-SDK-Documentation.md"; sourceTree = "<group>"; };
+		2DE5D2B21A310F7F001DDF3B /* REST-Documentation.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "REST-Documentation.md"; sourceTree = "<group>"; };
+		2DE5D2B41A311008001DDF3B /* Adjust-Install-Attrib-REST-API.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Adjust-Install-Attrib-REST-API.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		2DCAD634182FE45100FB8CF8 = {
 			isa = PBXGroup;
 			children = (
+				2DE5D2AD1A310F7F001DDF3B /* cortex-api.wiki */,
 				2DCAD63D182FE96E00FB8CF8 /* LICENSE */,
 				2DCAD63B182FE86D00FB8CF8 /* README.md */,
 				2DCAD63C182FE86D00FB8CF8 /* src */,
@@ -40,6 +47,20 @@
 				2DE0DAA5183534C3000DC4A3 /* example.js */,
 			);
 			name = example;
+			sourceTree = "<group>";
+		};
+		2DE5D2AD1A310F7F001DDF3B /* cortex-api.wiki */ = {
+			isa = PBXGroup;
+			children = (
+				2DE5D2B01A310F7F001DDF3B /* Home.md */,
+				2DE5D2AE1A310F7F001DDF3B /* Data-Best-Practices.md */,
+				2DE5D2B11A310F7F001DDF3B /* JS-SDK-Documentation.md */,
+				2DE5D2B21A310F7F001DDF3B /* REST-Documentation.md */,
+				2DE5D2AF1A310F7F001DDF3B /* Experiment-REST-API.md */,
+				2DE5D2B41A311008001DDF3B /* Adjust-Install-Attrib-REST-API.md */,
+			);
+			name = "cortex-api.wiki";
+			path = "../cortex-api.wiki";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
